@@ -1,0 +1,17 @@
+
+services:
+  mongodb:
+    image: mongo:7
+    container_name: real_estate_mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - real_estate_network
+
+volumes:
+  mongo_data:
+
+networks:
+  real_estate_network:
