@@ -1,6 +1,7 @@
 import logging
 from src.raw_data import RawDataLoader
 from src.clean import DataCleaner
+from src.aggregate import DataAggregator
 
 logging.basicConfig(
     level=logging.INFO,
@@ -36,6 +37,21 @@ def main() -> None:
     print(f"  Row Count: {clean_stats['row_count']}")
     print(f"  Sample Record: {clean_stats['sample'][0] if clean_stats['sample'] else 'None'}")
     cleaner.close()
+    
+    # AGGREGATION LAYER
+    logger.info("\n### Aggregation Layer ###")
+    aggregator = DataAggregator(mongo_uri, db_name)
+    
+    yearly_count = aggregator.aggregate_by_year()
+    town_count = aggregator.aggregate_by_town()
+    property_count = aggregator.aggregate_by_property_type()
+    
+    print(f"\nAggregation Layer Stats:")
+    print(f"  Yearly Records: {yearly_count}")
+    print(f"  Town Records: {town_count}")
+    print(f"  Property Type Records: {property_count}")
+    
+    aggregator.close()
     
     logger.info("=" * 50)
     logger.info("Pipeline completed")
