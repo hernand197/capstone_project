@@ -44,8 +44,10 @@ class DataCleaner:
         self.clean_collection.delete_many({})
         if validated_records:
             self.clean_collection.insert_many(validated_records)
-
-        logger.info(f"Loaded {len(validated_records)} valid records")
+            logger.info(f"Inserted {len(validated_records)} records into clean collection")
+        else:
+            logger.warning("No valid recrods to insert")
+        #logger.info(f"Loaded {len(validated_records)} valid records")
         return len(validated_records)
     
     def _format_columns(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -61,7 +63,9 @@ class DataCleaner:
     
     def _trim_whitespace(self, df: pd.DataFrame) -> pd.DataFrame:
         logger.info("Stripping whitespace from text fields")
-        df = df.map(lambda x: x.strip() if isinstance(x, str) else x)
+        string_columns = df.select_dtypes(include=['object']).columns
+        for col in string_columns:
+            df[col] = df[col].str.strip()
         return df
     
     def _convert_dates(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -101,18 +105,20 @@ class DataCleaner:
         return df
 
     def _validate_records(self, df: pd.DataFrame) -> list[dict[str, Any]]:
-        #Validate rows against pydantic schema
+        logger.info(f"Validating {len(df)} records")
+    
         validated = []
-        for _, row in df.iterrows():
+        records = df.to_dict('records')  
+    
+        for record in records:
             try:
-                record = RealEstateDataClean(**row.to_dict())
-                validated.append(record.model_dump(mode="json"))
-            except ValidationError:
+                validated_record = RealEstateDataClean(**record)
+                validated.append(validated_record.model_dump(mode="json"))
+            except ValidationError as e:
                 #skip invalid rows
                 continue
-
-        #log of records passed
-        logger.info(f"Validated {len(validated)} records")
+    
+        logger.info(f"Validated {len(validated)}/{len(records)} records")
         return validated
 
     def get_stats(self) -> dict[str, Any]:
@@ -120,6 +126,30 @@ class DataCleaner:
             "row_count": self.clean_collection.count_documents({}),
             "sample": list(self.clean_collection.find().limit(5)),
         }
+    
+    def display_cleaned_data(self, limit: int = 5) -> None:
+    
+        print("\n" + "=" * 50)
+        print("CLEANED DATA FROM DATABASE")
+        print("=" * 50)
+    
+        #show total count
+        total = self.clean_collection.count_documents({})
+        print(f"\nTotal Records in Clean Collection: {total}")
+    
+        #get records directly
+        records = self.clean_collection.find({}, {"_id": 0}).limit(limit)
+    
+        count = 1
+        for record in records:
+            print(f"\nRecord {count}:")
+            for key, value in record.items():
+                print(f"  {key}: {value}")
+            print("-" * 80)
+            count += 1
+
+
+
 
     def close(self) -> None:
         self.client.close()
