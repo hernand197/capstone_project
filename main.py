@@ -36,6 +36,7 @@ def main() -> None:
     print(f"\nClean Layer Stats:")
     print(f"  Row Count: {clean_stats['row_count']}")
     print(f"  Sample Record: {clean_stats['sample'][0] if clean_stats['sample'] else 'None'}")
+    cleaner.display_cleaned_data(limit=3)
     cleaner.close()
     
     # AGGREGATION LAYER
