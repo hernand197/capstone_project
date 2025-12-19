@@ -2,7 +2,7 @@
 ## Overview
 This ETL pipeline processes real estate sales data using Medallion Architecture. 
 
-##Architecture
+## Architecture
 
 CSV File -> Bronze Layer -> Silver Layer -> Gold Layer
           (raw_data.py)    (clean.py)      (aggregate.py)
