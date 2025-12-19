@@ -22,5 +22,22 @@ Gold Layer (aggregate.py)
   * Town: transaction count by town
   * Property Type: transaction count by type
 
-capstone_project/
-U+251C
+## Project Structure
+~~~
+captone_project/  
+  data/  
+      Real_Estate_Sales_2001-2023_GL.csv  
+  src/
+    raw_data.py         #csv to mongodb
+    clean.py            #data cleaning
+    aggregate.py        #aggregations
+    schemas.py          #pydantic validation schema
+  tests/
+    test_raw_data.py          #testing
+    test_clean.py
+    test_schemas.py
+  main.py
+  docker-compose.yml
+  pyproject.tomll
+     
+
