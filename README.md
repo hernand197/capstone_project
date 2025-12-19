@@ -22,4 +22,5 @@ Gold Layer (aggregate.py)
   * Town: transaction count by town
   * Property Type: transaction count by type
 
-capstone_project -L 2
+capstone_project/
+U+251C
