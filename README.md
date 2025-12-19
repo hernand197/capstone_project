@@ -10,6 +10,7 @@ CSV File -> Bronze Layer -> Silver Layer -> Gold Layer
 ## Pipeline Stages
 Bronze Layer
   * Loading the csv into MongoDB w/o transformation
+
 Silver Layer
   * Cleaning the data
       * Standardizing column names, trimming whitespace, converting dates to ISO format,
