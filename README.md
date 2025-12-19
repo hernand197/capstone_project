@@ -1,6 +1,7 @@
 # capstone_project
 ## Overview
 This ETL pipeline processes real estate sales data using Medallion Architecture. 
+
 ##Architecture
 
 CSV File -> Bronze Layer -> Silver Layer -> Gold Layer
